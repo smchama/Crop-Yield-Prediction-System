@@ -1,0 +1,17 @@
+How to run the Crop yield Prediction System
+
+The model training and building is run on the jupyter notebook
+* The fine name is �crop_yield predictor.ipynb�
+
+The system is developed in Visual Studio Code using python
+
+1. Open the python file, model.py 
+2. Run the code under a new terminal
+3. In the terminal write: streamlit run model.py then enter
+
+After running the file (streamlit run Linear_Model.py), You can now view your Streamlit app in your browser using the following links.
+
+  Local URL: http://localhost:8501
+  Network URL: http://127.0.0.1:8501
+
+

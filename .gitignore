@@ -1,0 +1,29 @@
+# Ignore datasets
+*.xlsx
+/data/
+datasets/
+
+# Ignore models
+*.pkl
+*.joblib
+.model_cache/
+
+# Ignore large files and temp stuff
+*.log
+*.tmp
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore all Windows system folders
+Application Data/
+Cookies/
+Local Settings/
+My Documents/
+NetHood/
+PrintHood/
+Recent/
+SendTo/
+Start Menu/
+Templates/

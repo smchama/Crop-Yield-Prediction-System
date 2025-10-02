@@ -1,0 +1,112 @@
+<div class="col-xl-12">
+  <div class="card">
+      <div class="card-header">
+        <div *ngIf="this.success" class="badge badge-success p-3 shadow-4" style="width: 30vw; top: 1vh; position: absolute; left: 25%;">
+          <span class="text-light "> User added Successfully</span>
+        </div>
+          <h5>Add / Edit Users</h5>
+          <!-- <span class="d-block m-t-5">use class <code>table-striped</code> inside table element</span> -->
+      </div>
+      <div class="card-block table-border-style">
+        <div class="card-body">
+        <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+          <div class="row">
+              <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="fname">First name</label>
+                          <input type="text" class="form-control" id="first_name" placeholder="Bongani"
+                          name="firstname" required [(ngModel)]="form.firstname" #firstname="ngModel">
+
+                      </div>
+                      <div class="form-group">
+                          <label for="lname">Last name</label>
+                          <input type="text" class="form-control" id="last_name" placeholder="Dube"
+                          name="lastname"
+                          [(ngModel)]="form.lastname" required #lastname="ngModel">
+                      </div>
+                      <div class="form-group">
+                          <label for="username">Username</label>
+                          <input type="text" class="form-control" name="username" id="username" placeholder="John"
+                          [(ngModel)]="form.username" required #username="ngModel"
+                          >
+                      </div>
+              </div>
+              <div class="col-md-6">
+
+                      <div class="form-group">
+                          <label>Email</label>
+                          <input type="text" class="form-control" name="email" placeholder="john@gmail.com"
+                          [(ngModel)]="form.email"  required #email="ngModel"
+                          >
+                      </div>
+                      <div class="form-group">
+                          <label for="password">Password</label>
+                          <input type="password" class="form-control" id="password"
+                          name="password" [(ngModel)]="form.password"  required #password="ngModel"
+                          >
+                      </div>
+
+                      <div class="form-group mt-5">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </div>
+
+              </div>
+
+          </div>
+      </form>
+
+      </div>
+      </div>
+  </div>
+</div>
+
+
+
+
+<div class="col-xl-12">
+  <div class="card">
+      <div class="card-header">
+          <h5>Users List</h5>
+          <!-- <span class="d-block m-t-5">use class <code>table-striped</code> inside table element</span> -->
+      </div>
+      <div class="card-block table-border-style">
+          <div class="table-responsive">
+              <table class="table table-striped">
+                  <thead>
+                      <tr>
+                          <th>#</th>
+                          <th>First Name</th>
+                          <th>Last Name</th>
+                          <th>Username</th>
+                          <th>Email</th>
+                          <th>Account Status</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr *ngFor="let user of users; let i=index" >
+                          <th scope="row">{{i + 1}}</th>
+                          <td>{{user.firstname}}</td>
+                          <td>{{user.lastname}}</td>
+                          <td>{{user.username}}</td>
+                          <td>{{user.email}}</td>
+                          <!-- <td>{{user.active}}</td> -->
+                          <td style="padding-bottom: 0!important;">
+                            <div class="form-group text-left" style="margin-left: 15%;">
+                              <div class="checkbox checkbox-fill d-inline">
+                                <input type="checkbox" name="{{user.id}}" id="{{user.id}}" [checked]="user.active" (change)="setActive(user)">
+                                <label for="{{user.id}}" class="cr"></label>
+                              </div>
+                            </div>
+                          </td>
+                          {{user.active}}
+                      </tr>
+                  </tbody>
+              </table>
+              <p *ngIf="users.length < 1" class="text-center">No Users</p>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+

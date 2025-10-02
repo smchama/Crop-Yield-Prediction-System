@@ -1,0 +1,182 @@
+<div class="col-xl-12">
+  <div class="card">
+      <div class="card-header">
+        <div *ngIf="success" class="badge badge-success p-3 shadow-4" style="width: 30vw; top: 1vh; position: absolute; left: 25%;">
+          <span class="text-light "> Data added Successfully</span>
+        </div>
+          <h5>Prediction form</h5>
+          <!-- <span class="d-block m-t-5">use class <code>table-striped</code> inside table element</span> -->
+      </div>
+      <div class="card-block table-border-style">
+        <div class="card-body">
+        <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+          <div class="row">
+              <div class="col-md-6">
+                      <div class="form-group">
+                          <label for="place">Place</label>
+                          <select class="form-control" id="place" name="place" [(ngModel)]="form.place" required #place="ngModel">
+                              <option>Gwanda</option>
+                              <option>Insiza</option>
+                              <option>Matobo</option>
+                              <option>Umzingwane</option>
+                              <option>Beitbridge</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                        <label for="place">Season</label>
+                        <select class="form-control" id="place" name="season" [(ngModel)]="form.season" required #season="ngModel">
+                            <option>Summer</option>
+                            <option>Winter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="place">Crop name</label>
+                      <select class="form-control" id="place" name="cropName" [(ngModel)]="form.cropName" required #cropName="ngModel">
+                          <option>Maize</option>
+                          <option>Sorghun</option>
+                          <option>Cow peas</option>
+                          <option>Finger millet</option>
+                          <option>Soya beans</option>
+                          <option>Wheat</option>
+                          <option>Ground Nuts</option>
+                           <option>Sweet Potato</option>
+                           <option>Sugarbeans</option>
+                           <option>Tomatoes</option>
+                           <option>Cabbage</option>
+                           <option>Black pepper</option>
+                           <option>Irish Potato                          </option>
+                           <option>Onion
+                          </option>
+                           <option>Butternut
+                          </option>
+                           <option>Sunflower
+                          </option>
+                           <option>Carrot
+                          </option>
+                           <option>Pumpkin
+                          </option>
+                           <option>Maize
+                          </option>
+                           <option>Sorghum
+                          </option>
+                           <option>Galic</option>
+                           <option>Okra
+                          </option>
+                           <option>Tobbacco</option>
+                           <option>Tsunga
+                          </option>
+                           <option>Chomolia
+                          </option>
+                           <option>Round nuts
+                          </option>
+                           <option>Cucamba
+                          </option>
+                           <option>Coliflower
+                          </option>
+                           <option>Beetroot
+                          </option>
+                           <option>Rice
+                          </option>
+                           <option>Barley
+                          </option>
+                      </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="place">Soil Type</label>
+                    <select class="form-control" id="soilType" name="soilType"
+                    [(ngModel)]="form.soilType" required #soilType="ngModel">
+                        <option>Kalahari Sand</option>
+                        <option>Clay</option>
+                    </select>
+                </div>
+
+
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline1" value="Linear Regression" name="algorithm"
+                    [(ngModel)]="form.algorithm" required #algorithm="ngModel"
+                    class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline1">Linear Regression</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline2"
+                    value="Random Forest Regression" name="algorithm"
+                    [(ngModel)]="form.algorithm" required #algorithm="ngModel"
+                     class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline2">Random Forest Regression</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline3"
+                    value="XGBoost" name="algorithm"
+                    [(ngModel)]="form.algorithm" required #algorithm="ngModel"
+                     class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline3">XGBoost</label>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline4"
+                    value="SVM" name="algorithm"
+                    [(ngModel)]="form.algorithm" required #algorithm="ngModel"
+                     class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline4">SVM</label>
+                </div>
+                <!-- <div class="custom-control custom-radio custom-control-inline">
+                    <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
+                    <label class="custom-control-label" for="customRadioInline2">Sequential</label>
+                </div> -->
+                <div class="form-group mt-4">
+                  <button type="submit" class="btn btn-primary w-100 mt-4">Submit</button>
+                </div>
+
+
+              </div>
+              <div class="col-md-6">
+                      <div class="form-group">
+                          <label>Area Planted (Hectare)</label>
+                          <input type="number" class="form-control" name="areaPlanted"
+                          [(ngModel)]="form.areaPlanted"  required #areaPlanted="ngModel"
+                          >
+                      </div>
+                      <div class="form-group">
+                          <label for="totalRainfall">Total Rainfall</label>
+                          <input type="number" class="form-control" id="totalRainfall"
+                          name="totalRainfall" [(ngModel)]="form.totalRainfall"  required #totalRainfall="ngModel"
+                          >
+                      </div>
+                      <div class="form-group">
+                          <label for="maxTemp">Max Temperature</label>
+                          <input type="number" class="form-control" id="maxTemp"
+                          name="maxTemp" [(ngModel)]="form.maxTemp"  required #maxTemp="ngModel">
+                      </div>
+                      <div class="form-group">
+                          <label for="maxTemp">Soil PH</label>
+                          <input type="number" class="form-control" id="soilPh"
+                          name="soilPh" [(ngModel)]="form.soilPh"  required #soilPh="ngModel">
+                      </div>
+
+
+                      <div class="card">
+                        <div class="card-block border">
+                            <div class="row d-flex align-items-center">
+                                <div class="col-auto">
+                                    <i class="feather icon-zap f-30 text-c-green"></i>
+                                </div>
+                                <div class="col">
+                                    <h3 class="f-w-300">{{totalProduction}} tonnes/hectare</h3>
+                                    <span class="d-block text-uppercase">88% accuracy</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                      <!-- <h2 class="">{{totalProduction}}t <span class="text-muted">Total Production </span></h2> -->
+
+              </div>
+
+
+
+          </div>
+      </form>
+
+      </div>
+      </div>
+  </div>
+</div>

@@ -1,0 +1,61 @@
+<div class="auth-wrapper">
+  <div class="auth-content">
+    <div class="auth-bg">
+      <!-- <span class="r"></span> -->
+      <span class="r s"></span>
+      <span class="r s"></span>
+      <span class="r"></span>
+    </div>
+    <h3 class="text-center text-muted">Machine learning Yield Prediction</h3>
+    <div class="card">
+      <div class="card-body text-center">
+        <div class="mb-4">
+          <i class="feather icon-unlock auth-icon"></i>
+        </div>
+        <h3 class="mb-4">Login</h3>
+        <form *ngIf="!isLoggedIn" name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Username" name="username" [(ngModel)]="form.username"
+              required #username="ngModel">
+          </div>
+          <div class="alert alert-danger" role="alert" *ngIf="username.errors && f.submitted">
+            Username is required!
+          </div>
+            <div class="input-group mb-4">
+              <input type="password" class="form-control" placeholder="password" name="password"
+                [(ngModel)]="form.password" required minlength="6"
+                #password="ngModel">
+            </div>
+            <div
+              class="alert alert-danger"
+              role="alert"
+              *ngIf="password.errors && f.submitted">
+
+              <div *ngIf="password.errors.required">Password is required</div>
+              <div *ngIf="password.errors.minlength">
+                Password must be at least 6 characters
+              </div>
+            </div>
+            <div class="form-group text-left">
+              <div class="checkbox checkbox-fill d-inline">
+                <input type="checkbox" name="checkbox-fill-1" id="checkbox-fill-a1" checked="">
+                <label for="checkbox-fill-a1" class="cr"> Save Details</label>
+              </div>
+            </div>
+            <button class="btn btn-primary shadow-2 mb-4">Login</button>
+            <p class="mb-2 text-muted">Forgot password? <a href="auth-reset-password.html">Reset</a></p>
+
+            <div class="form-group">
+              <div
+                class="alert alert-danger"
+                role="alert"
+                *ngIf="f.submitted && isLoginFailed"
+              >
+                Login failed: {{ errorMessage }}
+              </div>
+            </div>
+        </form>
+
+      </div>
+    </div>
+  </div>

@@ -248,7 +248,7 @@ with tab4:
     else:
         st.info("Perform a prediction first to see comparison.")
         
-        # deepseek  gemenine
+        
 
 # -----------------------
 # Dataset Tab

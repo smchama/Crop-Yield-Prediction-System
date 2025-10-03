@@ -205,19 +205,24 @@ with tab1:
                 unsafe_allow_html=True
             )
 
-# -----------------------
+
+
 # Comparison Tab
 # -----------------------
 with tab4:
     st.header("Crops Yield Comparison (Interactive)")
+
     if 'results' in st.session_state and st.session_state['results']:
         results = st.session_state['results']
         crop_names = list(results.keys())
         total_productions = [v[0] for v in results.values()]
         yields_per_hect = [v[1] for v in results.values()]
-        colors = ["green" if y >= 5 else "#880808" for y in yields_per_hect]
 
-        # Total Production
+        # Adopt same color scheme as Predict Tab
+        threshold = 15700  # same threshold
+        colors = ["green" if y >= threshold else "#880808" for y in yields_per_hect]
+
+        # Total Production Chart
         fig_total = go.Figure()
         fig_total.add_trace(go.Bar(
             x=crop_names,
@@ -227,25 +232,34 @@ with tab4:
             textposition='auto',
             hovertemplate='<b>%{x}</b><br>Total Production: %{y:.2f} tonnes<extra></extra>'
         ))
-        fig_total.update_layout(title="Predicted Total Production per Crop",
-                                xaxis_title="Crop", yaxis_title="Total Production (tonnes)")
-        st.plotly_chart(fig_total, width="stretch")
+        fig_total.update_layout(
+            title="Predicted Total Production per Crop",
+            xaxis_title="Crop",
+            yaxis_title="Total Production (tonnes)"
+        )
+        # Use config instead of deprecated width keyword
+        st.plotly_chart(fig_total, use_container_width=True, config={"responsive": True})
 
-        # Yield per Hectare
+        # Yield per Hectare Chart
         fig_yield = go.Figure()
         fig_yield.add_trace(go.Bar(
             x=crop_names,
             y=yields_per_hect,
             marker_color=colors,
-            text=[f"{v:.2f} tonnes/ha" for v in yields_per_hect],
+            text=[f"{v:.2f} t/ha" for v in yields_per_hect],
             textposition='auto',
-            hovertemplate='<b>%{x}</b><br>Yield per Hectare: %{y:.2f} tonnes<extra></extra>'
+            hovertemplate='<b>%{x}</b><br>Yield per Hectare: %{y:.2f} t/ha<extra></extra>'
         ))
-        fig_yield.update_layout(title="Predicted Yield per Hectare per Crop",
-                                xaxis_title="Crop", yaxis_title="Yield per Hectare (tonnes)")
-        st.plotly_chart(fig_yield, width="stretch")
+        fig_yield.update_layout(
+            title="Predicted Yield per Hectare per Crop",
+            xaxis_title="Crop",
+            yaxis_title="Yield per Hectare (t/ha)"
+        )
+        st.plotly_chart(fig_yield, use_container_width=True, config={"responsive": True})
+
     else:
-        st.info("Perform a prediction first to see comparison.")
+        st.info("Perform a prediction first to see comparison charts.")
+
 
 # -----------------------
 # Dataset Tab

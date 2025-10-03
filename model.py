@@ -1,4 +1,4 @@
-# crop_yield_app.py
+# crop_yield_prediction_ model.py
 import os
 import pickle
 import streamlit as st
@@ -10,6 +10,7 @@ from PIL import Image
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
+import plotly.graph_objects as go
 
 # -----------------------
 # Header
@@ -48,7 +49,7 @@ cols = st.columns(len(crop_images))
 for idx, (crop_name, img_path) in enumerate(crop_images.items()):
     with cols[idx]:
         if os.path.exists(img_path):
-            st.image(Image.open(img_path), use_container_width=True)
+            st.image(Image.open(img_path), width="stretch")  # new API
         else:
             st.text(f"{crop_name} image not found")
 
@@ -60,39 +61,31 @@ VERSION_FILE = "model_version.txt"
 GITHUB_API_LATEST_RELEASE = "https://api.github.com/repos/smchama/Crop-Yield-Prediction-System/releases/latest"
 
 def download_latest_model_auto():
-    st.info("Checking for latest model on GitHub...")
-    with st.spinner("Fetching latest release info..."):
-        try:
-            response = requests.get(GITHUB_API_LATEST_RELEASE)
-            response.raise_for_status()
-        except:
-            st.warning("Cannot reach GitHub. Using local model if available.")
-            return False
+    try:
+        response = requests.get(GITHUB_API_LATEST_RELEASE, timeout=5)
+        response.raise_for_status()
+    except:
+        return False  # silent fallback
 
-        release_data = response.json()
-        latest_version = release_data.get("tag_name", "")
-        local_version = ""
-        if os.path.exists(VERSION_FILE):
-            with open(VERSION_FILE, "r") as f:
-                local_version = f.read().strip()
+    release_data = response.json()
+    latest_version = release_data.get("tag_name", "")
+    local_version = ""
+    if os.path.exists(VERSION_FILE):
+        with open(VERSION_FILE, "r") as f:
+            local_version = f.read().strip()
 
-        if latest_version != local_version:
-            st.info(f"New model version detected: {latest_version}. Downloading...")
-            assets = release_data.get("assets", [])
-            for asset in assets:
-                if asset["name"] == "model.pkl":
-                    r = requests.get(asset["browser_download_url"])
-                    if r.status_code == 200:
-                        with open(MODEL_FILE, "wb") as f:
-                            f.write(r.content)
-                        with open(VERSION_FILE, "w") as f:
-                            f.write(latest_version)
-                        st.success(f"Model updated to version {latest_version}")
-                        return True
-        else:
-            st.info("Local model is up to date.")
-            return True
-    return False
+    if latest_version != local_version:
+        assets = release_data.get("assets", [])
+        for asset in assets:
+            if asset["name"] == "model.pkl":
+                r = requests.get(asset["browser_download_url"])
+                if r.status_code == 200:
+                    with open(MODEL_FILE, "wb") as f:
+                        f.write(r.content)
+                    with open(VERSION_FILE, "w") as f:
+                        f.write(latest_version)
+                    return True
+    return True
 
 # -----------------------
 # Train & Save Model
@@ -135,9 +128,7 @@ def train_and_save_model():
 # Load or Auto-Update Model
 # -----------------------
 if not os.path.exists(MODEL_FILE) or not download_latest_model_auto():
-    st.warning("Training a new model locally...")
     model, scaler, numeric_features, crop_columns = train_and_save_model()
-    st.success("Model trained and saved!")
 else:
     with open(MODEL_FILE, "rb") as f:
         saved = pickle.load(f)
@@ -170,20 +161,33 @@ with tab1:
     Area_Planted = st.slider("Area Planted (Hectares)", 1, 50000, 1000)
 
     if st.button("Predict"):
-        threshold = 5
+        threshold = 15700
         st.session_state['results'] = {}
         for crop_name in selected_crops:
             crop_vector = [1 if crop_name == c else 0 for c in crop_columns]
             numeric_vector = [Rainfall, Humidity, Temperature, Pesticides, Soil_ph, N, P, K, Area_Planted]
-            numeric_scaled = scaler.transform([numeric_vector])
-            input_vector = list(numeric_scaled[0]) + crop_vector
 
-            pred = model.predict([input_vector])[0]
+            # Scale numeric inputs as DataFrame
+            numeric_df = pd.DataFrame([numeric_vector], columns=numeric_features)
+            numeric_scaled = scaler.transform(numeric_df)
+
+            # Build full input dict with correct feature names
+            input_dict = {}
+            for i, col in enumerate(numeric_features):
+                input_dict[col] = numeric_scaled[0][i]
+            for i, c in enumerate(crop_columns):
+                input_dict[c] = crop_vector[i]
+
+            input_df = pd.DataFrame([input_dict])  # preserve column names
+
+            # Predict
+            pred = model.predict(input_df)[0]
+
             total_production = pred * Area_Planted
             yield_per_hectare = pred
             st.session_state['results'][crop_name] = (total_production, yield_per_hectare)
 
-            # Display individual results
+            # Display results
             st.subheader(f"{crop_name} Crop in {district} District")
             st.write(f"Total Production: {round(total_production,3)} tonnes")
             st.write(f"Yield per Hectare: {round(yield_per_hectare,3)} tonnes")
@@ -204,13 +208,8 @@ with tab1:
 # -----------------------
 # Comparison Tab
 # -----------------------
-import plotly.graph_objects as go
-
-# -----------------------
-# Comparison Tab (Interactive)
-# -----------------------
 with tab4:
-    st.header(" Crops Yield Comparison (Interactive)")
+    st.header("Crops Yield Comparison (Interactive)")
     if 'results' in st.session_state and st.session_state['results']:
         results = st.session_state['results']
         crop_names = list(results.keys())
@@ -218,7 +217,7 @@ with tab4:
         yields_per_hect = [v[1] for v in results.values()]
         colors = ["green" if y >= 5 else "#880808" for y in yields_per_hect]
 
-        # Total Production Bar Chart
+        # Total Production
         fig_total = go.Figure()
         fig_total.add_trace(go.Bar(
             x=crop_names,
@@ -230,9 +229,9 @@ with tab4:
         ))
         fig_total.update_layout(title="Predicted Total Production per Crop",
                                 xaxis_title="Crop", yaxis_title="Total Production (tonnes)")
-        st.plotly_chart(fig_total, use_container_width=True)
+        st.plotly_chart(fig_total, width="stretch")
 
-        # Yield per Hectare Bar Chart
+        # Yield per Hectare
         fig_yield = go.Figure()
         fig_yield.add_trace(go.Bar(
             x=crop_names,
@@ -244,11 +243,9 @@ with tab4:
         ))
         fig_yield.update_layout(title="Predicted Yield per Hectare per Crop",
                                 xaxis_title="Crop", yaxis_title="Yield per Hectare (tonnes)")
-        st.plotly_chart(fig_yield, use_container_width=True)
+        st.plotly_chart(fig_yield, width="stretch")
     else:
         st.info("Perform a prediction first to see comparison.")
-        
-        
 
 # -----------------------
 # Dataset Tab

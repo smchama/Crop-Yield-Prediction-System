@@ -232,6 +232,7 @@ with tab1:
 # -----------------------
 with tab4:
     st.header("Crops Yield Comparison (Interactive)")
+
     if 'results' in st.session_state and st.session_state['results']:
         results = st.session_state['results']
         crop_names = list(results.keys())
@@ -241,7 +242,9 @@ with tab4:
         threshold = 15700
         colors = ["green" if y >= threshold else "#880808" for y in yields_per_hect]
 
+        # -------------------
         # Total Production Chart
+        # -------------------
         fig_total = go.Figure()
         fig_total.add_trace(go.Bar(
             x=crop_names,
@@ -256,9 +259,15 @@ with tab4:
             xaxis_title="Crop",
             yaxis_title="Total Production (tonnes)"
         )
-        st.plotly_chart(fig_total, width='stretch', config={"responsive": True})  # MOBILE-FRIENDLY
+        st.plotly_chart(
+            fig_total,
+            use_container_width=True,  # responsive width
+            config={"responsive": True}  # responsive Plotly config
+        )
 
+        # -------------------
         # Yield per Hectare Chart
+        # -------------------
         fig_yield = go.Figure()
         fig_yield.add_trace(go.Bar(
             x=crop_names,
@@ -273,9 +282,15 @@ with tab4:
             xaxis_title="Crop",
             yaxis_title="Yield per Hectare (t/ha)"
         )
-        st.plotly_chart(fig_yield, width='stretch', config={"responsive": True})  # MOBILE-FRIENDLY
+        st.plotly_chart(
+            fig_yield,
+            use_container_width=True,
+            config={"responsive": True}
+        )
+
     else:
         st.info("Perform a prediction first to see comparison charts.")
+
 
 # -----------------------
 # Dataset Tab
